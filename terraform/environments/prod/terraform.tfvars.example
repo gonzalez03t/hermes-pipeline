@@ -1,0 +1,4 @@
+project_id  = "gonzalez03t-portfolio"
+region      = "us-east1"
+environment = "prod"
+image       = "us-east1-docker.pkg.dev/gonzalez03t-portfolio/hermes-pipeline/app:latest"
