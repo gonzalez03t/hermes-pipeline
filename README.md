@@ -218,20 +218,37 @@ The app uses the [Firebase Admin SDK](https://firebase.google.com/docs/admin/set
 
 ## Local Development
 
-**Prerequisites:** Node.js 20+, `gcloud` CLI, Terraform 1.5+
+**Prerequisites:** Node.js 20+, Java 21+ (for Firestore emulator), [Firebase CLI](https://firebase.google.com/docs/cli)
 
 ```bash
+# Install Firebase CLI (once)
+npm install -g firebase-tools
+
 # Install dependencies
 npm install
 
-# Authenticate with GCP for local Firestore access
-gcloud auth application-default login
+# Copy environment template
+cp .env.local.example .env.local
+```
 
-# Run the development server
+Run the app locally using two terminals:
+
+**Terminal 1 — Firestore emulator:**
+```bash
+npm run emulator
+```
+
+**Terminal 2 — Next.js dev server:**
+```bash
 npm run dev
 ```
 
-App runs at `http://localhost:3000`.
+| URL | Description |
+|---|---|
+| `http://localhost:3000` | App |
+| `http://localhost:3000/api/health` | Health check |
+| `http://localhost:3000/api/items` | Items API |
+| `http://localhost:4000` | Firestore emulator UI |
 
 ---
 
