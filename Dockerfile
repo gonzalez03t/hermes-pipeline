@@ -19,6 +19,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 
+# Remove npm — not needed at runtime, eliminates its bundled CVEs
+RUN npm uninstall -g npm
+
 # Create non-root user and group
 RUN addgroup --system nodejs && adduser --system --ingroup nodejs nextjs
 
