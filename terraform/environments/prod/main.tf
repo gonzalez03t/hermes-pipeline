@@ -51,9 +51,15 @@ resource "google_monitoring_uptime_check_config" "health" {
 
 # ── Observability — availability SLO (prod only) ───────────────────────────────
 
+resource "google_monitoring_custom_service" "app" {
+  project      = var.project_id
+  service_id   = "hermes-pipeline-${var.environment}"
+  display_name = "Hermes Pipeline ${var.environment}"
+}
+
 resource "google_monitoring_slo" "availability" {
   project      = var.project_id
-  service      = "hermes-pipeline-${var.environment}"
+  service      = google_monitoring_custom_service.app.service_id
   slo_id       = "hermes-pipeline-availability"
   display_name = "Hermes Pipeline availability SLO"
   goal         = 0.995
