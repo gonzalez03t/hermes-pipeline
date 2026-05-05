@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - uses: github/codeql-action/autobuild@v3
+
+      - uses: github/codeql-action/analyze@v3
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: hermes-pipeline:ci
+          load: true
+
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: hermes-pipeline:ci
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+  terraform-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+
+      - name: No Terraform changes, skipping validation
+        if: steps.changes.outputs.terraform != 'true'
+        run: echo "No Terraform files changed. Skipping validation."
+
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.changes.outputs.terraform == 'true'
+
+      - name: Check formatting
+        if: steps.changes.outputs.terraform == 'true'
+        run: terraform -chdir=terraform fmt -check -recursive
+
+      - name: Validate dev
+        if: steps.changes.outputs.terraform == 'true'
+        run: |
+          terraform -chdir=terraform/environments/dev init -backend=false
+          terraform -chdir=terraform/environments/dev validate
+
+      - name: Validate prod
+        if: steps.changes.outputs.terraform == 'true'
+        run: |
+          terraform -chdir=terraform/environments/prod init -backend=false
+          terraform -chdir=terraform/environments/prod validate
