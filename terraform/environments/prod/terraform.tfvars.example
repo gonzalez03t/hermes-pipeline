@@ -1,0 +1,5 @@
+project_id  = "gonzalez03t-portfolio"
+region      = "us-east1"
+environment = "prod"
+# Use the placeholder until CI/CD pushes the first real image
+image       = "us-docker.pkg.dev/cloudrun/container/hello:latest"
