@@ -12,23 +12,6 @@ provider "google" {
   region  = var.region
 }
 
-# ── Shared resources (managed by dev state, referenced here) ───────────────────
-
-data "google_iam_workload_identity_pool" "github" {
-  project                   = var.project_id
-  workload_identity_pool_id = "github-pool"
-}
-
-data "google_service_account" "ci" {
-  project    = var.project_id
-  account_id = "hermes-pipeline-ci"
-}
-
-data "google_service_account" "cd" {
-  project    = var.project_id
-  account_id = "hermes-pipeline-cd"
-}
-
 # ── Cloud Run (prod-specific) ──────────────────────────────────────────────────
 
 module "cloud_run" {
