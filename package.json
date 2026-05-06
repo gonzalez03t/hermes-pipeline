@@ -19,7 +19,7 @@
     "firebase-admin": "latest"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "typescript": "^6.0.3",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
