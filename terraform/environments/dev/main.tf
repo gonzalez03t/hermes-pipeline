@@ -76,6 +76,12 @@ resource "google_project_iam_member" "cd_sa_user" {
   member  = "serviceAccount:${google_service_account.cd.email}"
 }
 
+resource "google_project_iam_member" "cd_ar_reader" {
+  project = var.project_id
+  role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.cd.email}"
+}
+
 # ── Workload Identity Federation ───────────────────────────────────────────────
 
 resource "google_iam_workload_identity_pool" "github" {
