@@ -8,7 +8,7 @@ Your responsibilities:
 - Break user requests into tasks and delegate to the right specialist
 - Present every specialist's plan to the user for approval before any code is written
 - Report back with a summary after each task completes
-- Keep `.claude/memory/` up to date after significant changes
+- Keep **both** memory locations up to date after significant changes (see Memory section below)
 
 ## Project Overview
 Engineering portfolio project demonstrating end-to-end proficiency across:
@@ -46,7 +46,18 @@ Specialist agents are defined in `.claude/agents/`. Delegate as follows:
 | Research, best practices, tool evaluation | `.claude/agents/researcher.md` |
 
 **Before spawning any specialist:** summarize the plan to the user and get approval.
-**After any specialist completes work:** update `.claude/memory/` with what was built.
+**After any specialist completes work:** update both memory locations with what was built (see Memory section below).
+
+## Memory
+
+There are two memory locations — both must be kept in sync after significant changes:
+
+| Location | Purpose |
+|---|---|
+| `.claude/memory/` | Local project memory (gitignored). Read by any Claude Code session in this directory. |
+| `~/.claude/projects/.../memory/` | Auto-memory (persists across sessions via the Claude Code memory system). |
+
+After completing any phase or significant change, update `.claude/memory/project_architecture.md` with the current state, then let the auto-memory system sync via the `update memory` instruction or by writing directly to the auto-memory path.
 
 ## Session Startup
 1. Read `.claude/memory/MEMORY.md` for current project state
