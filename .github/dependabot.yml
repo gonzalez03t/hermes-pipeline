@@ -4,8 +4,24 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
 
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Keep @types/node pinned to Node 20 — our runtime is node:20-alpine
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-prod-dependencies:
+        applies-to: version-updates
+        dependency-type: production
+        patterns: ["*"]
+      npm-dev-dependencies:
+        applies-to: version-updates
+        dependency-type: development
+        patterns: ["*"]
